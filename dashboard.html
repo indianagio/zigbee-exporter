@@ -11,15 +11,15 @@
     --green: #22c55e; --orange: #f97316; --purple: #a78bfa;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { 
-    background: var(--bg); color: var(--text); 
+  body {
+    background: var(--bg); color: var(--text);
     font-family: system-ui, -apple-system, sans-serif;
-    font-size: 13px; padding: 20px; 
+    font-size: 13px; padding: 20px;
   }
   h1 { color: var(--accent); margin-bottom: 8px; font-size: 1.6rem; }
   .instructions { color: var(--muted); margin-bottom: 20px; font-size: 0.9rem; max-width: 800px; line-height: 1.5; }
-  
-  .upload-area {
+
+  .upload-area{
     background: rgba(56, 189, 248, 0.05);
     border: 2px dashed var(--accent);
     border-radius: 12px;
@@ -28,48 +28,50 @@
     margin-bottom: 24px;
     transition: all 0.3s ease;
   }
-  .upload-area.dragover {
+  .upload-area.dragover{
     background: rgba(56, 189, 248, 0.15);
     border-color: #fff;
   }
   .upload-area p { margin-bottom: 15px; font-size: 1.1rem; }
-  .upload-btn {
+  .upload-btn{
     background: var(--accent); color: #000;
     padding: 10px 20px; border-radius: 8px;
     font-weight: 600; cursor: pointer; display: inline-block;
   }
   input[type="file"] { display: none; }
-  
-  .file-badges {
-    display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px;
-  }
-  .file-badge {
+
+  .file-badges { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
+  .file-badge{
     background: var(--surface); border: 1px solid var(--border);
     padding: 6px 12px; border-radius: 20px; font-size: 0.85rem;
     display: flex; align-items: center; gap: 8px;
   }
-  .file-badge .remove {
-    color: #ef4444; cursor: pointer; font-weight: bold;
-  }
+  .file-badge .remove{ color: #ef4444; cursor: pointer; font-weight: bold; }
 
-  .toolbar { 
-    display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; align-items: center; 
+  .toolbar{
+    display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; align-items: center;
     background: var(--surface); padding: 15px; border-radius: 10px; border: 1px solid var(--border);
   }
-  input[type=text] {
+  input[type=text]{
     background: var(--bg); border: 1px solid var(--border); color: var(--text);
     padding: 8px 14px; border-radius: 8px; font-size: 13px; width: 300px; outline: none;
   }
   input[type=text]:focus { border-color: var(--accent); }
-  select {
+  select{
     background: var(--bg); border: 1px solid var(--border); color: var(--text);
     padding: 8px 10px; border-radius: 8px; font-size: 13px; outline: none;
+  }
+  .toggle{
+    display: inline-flex; gap: 8px; align-items: center;
+    color: var(--muted); font-size: 0.85rem;
+    padding: 6px 10px; border: 1px solid var(--border); border-radius: 8px;
+    background: rgba(255,255,255,0.02);
   }
   .count { color: var(--accent); font-weight: 600; margin-left: auto; }
 
   .table-wrap { overflow-x: auto; border-radius: 10px; border: 1px solid var(--border); }
   table { width: 100%; border-collapse: collapse; text-align: left; }
-  th {
+  th{
     background: var(--surface); color: var(--accent);
     padding: 12px; font-size: 0.8rem; text-transform: uppercase;
     letter-spacing: .05em; cursor: pointer; white-space: nowrap; user-select: none;
@@ -80,9 +82,9 @@
   tr:nth-child(even) { background: rgba(255,255,255,.02); }
   tr:hover { background: rgba(56,189,248,.07); }
   td { padding: 10px 12px; border-top: 1px solid var(--border); vertical-align: top; }
-  
+
   .source-col { font-family: monospace; color: var(--purple); font-size: 0.8rem; }
-  .badge {
+  .badge{
     display: inline-block; padding: 3px 8px; border-radius: 12px;
     font-size: 0.75rem; font-weight: 600;
   }
@@ -94,15 +96,16 @@
   .hidden { display: none !important; }
   #noResults { text-align: center; color: var(--muted); padding: 40px; display: none; background: var(--surface); }
 </style>
-<!-- Includiamo PapaParse via CDN per il parsing CSV nel browser -->
+
+<!-- PapaParse via CDN (se vuoi offline, lo rendiamo locale in un passo successivo) -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 </head>
 <body>
 
 <h1>📡 Zigbee Multi-Exporter Dashboard</h1>
 <p class="instructions">
-  Trascina in questa pagina o seleziona tutti i file <code>z2m_devices.csv</code> generati dalle tue varie installazioni Home Assistant. 
-  Tutti i dispositivi verranno aggregati in un'unica tabella ricercabile. I dati non vengono inviati a nessun server, tutto viene elaborato localmente nel tuo browser.
+  Trascina in questa pagina o seleziona tutti i file <code>z2m_devices.csv</code> generati dalle tue varie installazioni Home Assistant.
+  Tutti i dispositivi verranno aggregati in un'unica tabella ricercabile. I dati non vengono inviati a nessun server: l'elaborazione avviene nel browser.
 </p>
 
 <div class="upload-area" id="dropZone">
@@ -116,15 +119,23 @@
 
 <div class="toolbar" id="toolbar" style="display: none;">
   <input type="text" id="search" placeholder="🔍 Cerca vendor, model, friendly_name..." oninput="filterTable()">
+
   <select id="sourceFilter" onchange="filterTable()">
     <option value="">Tutte le sorgenti</option>
   </select>
+
   <select id="typeFilter" onchange="filterTable()">
     <option value="">Tutti i tipi</option>
     <option value="Router">Router</option>
     <option value="EndDevice">EndDevice</option>
     <option value="Coordinator">Coordinator</option>
   </select>
+
+  <label class="toggle" title="Mostra un solo device per combinazione vendor+model+type (utile per una vista 'catalogo')">
+    <input type="checkbox" id="uniqueToggle">
+    Solo 1 per modello
+  </label>
+
   <div class="count" id="countLabel">0 dispositivi</div>
 </div>
 
@@ -152,10 +163,15 @@
   let allDevices = [];
   let loadedFiles = new Set();
   let sortDir = {};
+  let uniqueOnly = false;
 
-  // Setup Drag & Drop
   const dropZone = document.getElementById('dropZone');
   const fileInput = document.getElementById('fileInput');
+
+  document.getElementById('uniqueToggle').addEventListener('change', (e) => {
+    uniqueOnly = e.target.checked;
+    renderTable();
+  });
 
   ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(ev => {
     dropZone.addEventListener(ev, preventDefaults, false);
@@ -180,7 +196,6 @@
         parseCSV(file);
       }
     });
-    // Reset dell'input per permettere di ricaricare lo stesso file se modificato
     fileInput.value = '';
   }
 
@@ -192,13 +207,12 @@
         if (results.data && results.data.length > 0) {
           loadedFiles.add(file.name);
           addFileBadge(file.name);
-          
-          // Aggiungi l'origine ad ogni riga
+
           const newDevices = results.data.map(row => ({
             ...row,
             _source: file.name
           }));
-          
+
           allDevices = [...allDevices, ...newDevices];
           updateUI();
         }
@@ -225,8 +239,7 @@
     loadedFiles.delete(filename);
     const badge = document.getElementById('badge-' + filename.replace(/[^a-zA-Z0-9]/g, '_'));
     if (badge) badge.remove();
-    
-    // Rimuovi i dispositivi associati a questo file
+
     allDevices = allDevices.filter(d => d._source !== filename);
     updateUI();
   }
@@ -235,10 +248,9 @@
     const hasData = allDevices.length > 0;
     document.getElementById('toolbar').style.display = hasData ? 'flex' : 'none';
     document.getElementById('tableContainer').style.display = hasData ? 'block' : 'none';
-    
+
     if (!hasData) return;
 
-    // Aggiorna tendina sorgenti
     const sourceSelect = document.getElementById('sourceFilter');
     sourceSelect.innerHTML = '<option value="">Tutte le sorgenti</option>';
     Array.from(loadedFiles).sort().forEach(src => {
@@ -261,13 +273,47 @@
          .replace(/'/g, "&#039;");
   }
 
+  function normalize(s) {
+    return (s || '').toString().trim().toLowerCase();
+  }
+
+  function getDevicesToRender() {
+    if (!uniqueOnly) return allDevices;
+
+    // Unique per "tipo di device" inteso come modello: vendor + model + type
+    // Se ci sono duplicati, teniamo quello con exposes/endpoints più "ricchi".
+    const bestByKey = new Map();
+
+    for (const d of allDevices) {
+      const key = [
+        normalize(d.vendor),
+        normalize(d.model),
+        normalize(d.type),
+      ].join('|');
+
+      const score = (d.exposes || '').length + (d.endpoints || '').length;
+      const existing = bestByKey.get(key);
+      if (!existing) {
+        bestByKey.set(key, { device: d, score });
+        continue;
+      }
+      if (score > existing.score) {
+        bestByKey.set(key, { device: d, score });
+      }
+    }
+
+    return Array.from(bestByKey.values()).map(x => x.device);
+  }
+
   function renderTable() {
     const tbody = document.getElementById('tableBody');
     tbody.innerHTML = '';
 
-    allDevices.forEach(r => {
+    const devices = getDevicesToRender();
+
+    devices.forEach(r => {
       const typeClass = (r.type || '').toLowerCase().replace(' ', '');
-      
+
       const tr = document.createElement('tr');
       tr.innerHTML = `
         <td class="source-col">${escapeHtml(r._source)}</td>
@@ -280,7 +326,7 @@
         <td class="exposes">${escapeHtml(r.exposes)}</td>
         <td class="endpoints">${escapeHtml(r.endpoints)}</td>
       `;
-      // Salvo i dati raw nel dataset per il filtro testuale
+
       tr.dataset.text = Object.values(r).join(' ').toLowerCase();
       tr.dataset.source = r._source;
       tr.dataset.type = r.type || '';
@@ -294,7 +340,7 @@
     const q = document.getElementById('search').value.toLowerCase();
     const source = document.getElementById('sourceFilter').value;
     const type = document.getElementById('typeFilter').value;
-    
+
     const rows = document.querySelectorAll('#tableBody tr');
     let visible = 0;
 
@@ -311,22 +357,25 @@
       }
     });
 
-    document.getElementById('countLabel').textContent = `${visible} di ${allDevices.length} dispositivi`;
+    const renderedTotal = rows.length;
+    document.getElementById('countLabel').textContent =
+      `${visible} di ${renderedTotal} (importati: ${allDevices.length})`;
+
     document.getElementById('noResults').style.display = visible === 0 ? 'block' : 'none';
   }
 
   function sortTable(colIndex) {
     const tbody = document.getElementById('tableBody');
     const rows = Array.from(tbody.querySelectorAll('tr'));
-    
+
     sortDir[colIndex] = !sortDir[colIndex];
-    
+
     rows.sort((a, b) => {
       const va = (a.cells[colIndex].textContent || '').trim().toLowerCase();
       const vb = (b.cells[colIndex].textContent || '').trim().toLowerCase();
       return sortDir[colIndex] ? va.localeCompare(vb) : vb.localeCompare(va);
     });
-    
+
     rows.forEach(row => tbody.appendChild(row));
   }
 </script>
