@@ -1,0 +1,10 @@
+generate:
+  name: Generate inventory
+  description: Generate CSV and HTML inventory files from Zigbee2MQTT bridge/devices.
+  fields:
+    force:
+      name: Force regeneration
+      description: Regenerate even if payload did not change.
+      required: false
+      selector:
+        boolean: {}
