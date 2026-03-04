@@ -10,11 +10,9 @@ from .const import (
     CONF_TOPIC,
     CONF_OUTPUT_DIR,
     CONF_FILE_CSV,
-    CONF_FILE_HTML,
     DEFAULT_TOPIC,
     DEFAULT_OUTPUT_DIR,
     DEFAULT_FILE_CSV,
-    DEFAULT_FILE_HTML,
 )
 
 class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
@@ -29,7 +27,6 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 vol.Required(CONF_TOPIC, default=DEFAULT_TOPIC): str,
                 vol.Required(CONF_OUTPUT_DIR, default=DEFAULT_OUTPUT_DIR): str,
                 vol.Required(CONF_FILE_CSV, default=DEFAULT_FILE_CSV): str,
-                vol.Required(CONF_FILE_HTML, default=DEFAULT_FILE_HTML): str,
             }
         )
         return self.async_show_form(step_id="user", data_schema=schema)
@@ -55,7 +52,6 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                 vol.Required(CONF_TOPIC, default=data.get(CONF_TOPIC, DEFAULT_TOPIC)): str,
                 vol.Required(CONF_OUTPUT_DIR, default=data.get(CONF_OUTPUT_DIR, DEFAULT_OUTPUT_DIR)): str,
                 vol.Required(CONF_FILE_CSV, default=data.get(CONF_FILE_CSV, DEFAULT_FILE_CSV)): str,
-                vol.Required(CONF_FILE_HTML, default=data.get(CONF_FILE_HTML, DEFAULT_FILE_HTML)): str,
             }
         )
         return self.async_show_form(step_id="init", data_schema=schema)
